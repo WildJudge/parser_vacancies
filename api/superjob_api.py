@@ -23,7 +23,15 @@ class SuperJobAPI(AbstractAPI):
             'X-Api-App-Id': self.app_id,
             'X-Api-Secret-Key': self.secret_key
         }
-        response = requests.get(f'https://api.superjob.ru/2.0/vacancies?town=Москва&keywords={search_query}',
-                                headers=headers)
-        vacancies = response.json()['objects']
-        return vacancies
+        url = 'https://api.superjob.ru/2.0/vacancies'
+        params = {'town': 'Москва', 'keywords': search_query}
+        response = requests.get(url, params=params, headers=headers)
+        data = response.json()
+
+        # Проверяем наличие ключа 'objects' в JSON-ответе
+        if 'objects' in data:
+            vacancies = data['objects']
+            return vacancies
+        else:
+            print("Ошибка при получении вакансий с SuperJob.")
+            return []
